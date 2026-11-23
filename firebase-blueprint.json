@@ -1,0 +1,238 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Private user account preferences, device metadata, and moderation status.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 256 },
+        "darkMode": { "type": "boolean" },
+        "language": { "type": "string", "maxLength": 16 },
+        "blockedUserIds": { "type": "array" },
+        "whoCanSendRequests": { "type": "string", "enum": ["EVERYONE", "FRIENDS_OF_FRIENDS", "NOBODY"] },
+        "defaultPostVisibility": { "type": "string", "enum": ["PUBLIC", "FRIENDS", "ONLY_ME"] },
+        "accountStatus": { "type": "string", "enum": ["ACTIVE", "LOCKED", "BANNED", "REMOVED"] },
+        "deviceId": { "type": "string", "maxLength": 128 },
+        "deviceModel": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "email", "accountStatus"]
+    },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "description": "Publicly visible user profile metadata and social counters.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "username": { "type": "string", "maxLength": 40 },
+        "usernameLower": { "type": "string", "maxLength": 40 },
+        "bio": { "type": "string", "maxLength": 500 },
+        "location": { "type": "string", "maxLength": 120 },
+        "avatarMediaId": { "type": "string", "maxLength": 128 },
+        "avatarUrl": { "type": "string", "maxLength": 2048 },
+        "coverMediaId": { "type": "string", "maxLength": 128 },
+        "friendsCount": { "type": "number" },
+        "followersCount": { "type": "number" },
+        "followingCount": { "type": "number" },
+        "postsCount": { "type": "number" },
+        "online": { "type": "boolean" },
+        "lastSeen": { "type": "string" },
+        "accountStatus": { "type": "string", "enum": ["ACTIVE", "LOCKED", "BANNED", "REMOVED"] },
+        "whoCanSendRequests": { "type": "string", "enum": ["EVERYONE", "FRIENDS_OF_FRIENDS", "NOBODY"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "name", "username", "usernameLower"]
+    },
+    "UsernameReservation": {
+      "title": "UsernameReservation",
+      "description": "Unique lowercase username reservation mapping.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "username"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "Social feed post with optional Base64 media references, visibility, and moderation status.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string", "maxLength": 128 },
+        "authorName": { "type": "string", "maxLength": 100 },
+        "authorUsername": { "type": "string", "maxLength": 40 },
+        "authorAvatarUrl": { "type": "string", "maxLength": 2048 },
+        "authorAvatarMediaId": { "type": "string", "maxLength": 128 },
+        "caption": { "type": "string", "maxLength": 5000 },
+        "mediaIds": { "type": "array" },
+        "mediaTypes": { "type": "array" },
+        "visibility": { "type": "string", "enum": ["PUBLIC", "FRIENDS", "ONLY_ME"] },
+        "audienceUids": { "type": "array" },
+        "likesCount": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "sharesCount": { "type": "number" },
+        "moderationStatus": { "type": "string", "enum": ["ACTIVE", "REMOVED"] },
+        "featured": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["authorId", "visibility", "moderationStatus"]
+    },
+    "Like": {
+      "title": "Like",
+      "description": "User like record on a post.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Comment or threaded reply on a post.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string", "maxLength": 128 },
+        "authorName": { "type": "string", "maxLength": 100 },
+        "authorUsername": { "type": "string", "maxLength": 40 },
+        "authorAvatarUrl": { "type": "string", "maxLength": 2048 },
+        "authorAvatarMediaId": { "type": "string", "maxLength": 128 },
+        "text": { "type": "string", "maxLength": 2000 },
+        "replyToCommentId": { "type": "string", "maxLength": 128 },
+        "replyToAuthorName": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["authorId", "text"]
+    },
+    "FriendRequest": {
+      "title": "FriendRequest",
+      "description": "Pending or resolved friend request between two users.",
+      "type": "object",
+      "properties": {
+        "fromUid": { "type": "string", "maxLength": 128 },
+        "toUid": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["PENDING", "ACCEPTED", "REJECTED"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["fromUid", "toUid", "status"]
+    },
+    "Friendship": {
+      "title": "Friendship",
+      "description": "Mutual friendship edge between two users.",
+      "type": "object",
+      "properties": {
+        "userIds": { "type": "array" },
+        "uid1": { "type": "string", "maxLength": 128 },
+        "uid2": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userIds"]
+    },
+    "Follow": {
+      "title": "Follow",
+      "description": "One-way follow relationship.",
+      "type": "object",
+      "properties": {
+        "followerId": { "type": "string", "maxLength": 128 },
+        "followingId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["followerId", "followingId"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User activity notification.",
+      "type": "object",
+      "properties": {
+        "recipientId": { "type": "string", "maxLength": 128 },
+        "actorId": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "actorAvatarUrl": { "type": "string", "maxLength": 2048 },
+        "type": { "type": "string", "maxLength": 40 },
+        "postId": { "type": "string", "maxLength": 128 },
+        "message": { "type": "string", "maxLength": 500 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["recipientId", "actorId", "type"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "User-submitted moderation report.",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string", "maxLength": 128 },
+        "targetType": { "type": "string", "enum": ["POST", "USER"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "reason": { "type": "string", "maxLength": 200 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["PENDING", "RESOLVED"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["reporterId", "targetType", "targetId", "reason"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct messaging thread between two users.",
+      "type": "object",
+      "properties": {
+        "participantIds": { "type": "array" },
+        "lastMessage": { "type": "string", "maxLength": 2000 },
+        "lastSenderId": { "type": "string", "maxLength": 128 },
+        "lastMessageAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["participantIds"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual chat message inside a conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "maxLength": 260 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "text": { "type": "string", "maxLength": 4000 },
+        "mediaId": { "type": "string", "maxLength": 128 },
+        "mediaType": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["senderId"]
+    },
+    "Media": {
+      "title": "Media",
+      "description": "Base64-encoded image, video, or audio asset stored in Firestore.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "mimeType": { "type": "string", "enum": ["image/jpeg", "video/mp4", "audio/mp4"] },
+        "dataBase64": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["ownerId", "mimeType", "dataBase64"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": { "$ref": "#/entities/User" }, "description": "User account records" },
+    "/public_profiles/{uid}": { "schema": { "$ref": "#/entities/PublicProfile" }, "description": "Public social profiles" },
+    "/usernames/{usernameLower}": { "schema": { "$ref": "#/entities/UsernameReservation" }, "description": "Unique username index" },
+    "/posts/{postId}": { "schema": { "$ref": "#/entities/Post" }, "description": "Social posts" },
+    "/posts/{postId}/likes/{uid}": { "schema": { "$ref": "#/entities/Like" }, "description": "Post likes" },
+    "/posts/{postId}/comments/{commentId}": { "schema": { "$ref": "#/entities/Comment" }, "description": "Post comments and replies" },
+    "/friendRequests/{requestId}": { "schema": { "$ref": "#/entities/FriendRequest" }, "description": "Friend requests" },
+    "/friendships/{friendshipId}": { "schema": { "$ref": "#/entities/Friendship" }, "description": "Friendships" },
+    "/follows/{followId}": { "schema": { "$ref": "#/entities/Follow" }, "description": "Follow relationships" },
+    "/notifications/{id}": { "schema": { "$ref": "#/entities/Notification" }, "description": "User notifications" },
+    "/reports/{id}": { "schema": { "$ref": "#/entities/Report" }, "description": "Moderation reports" },
+    "/conversations/{conversationId}": { "schema": { "$ref": "#/entities/Conversation" }, "description": "Direct message conversations" },
+    "/conversations/{conversationId}/messages/{msgId}": { "schema": { "$ref": "#/entities/Message" }, "description": "Conversation messages" },
+    "/media/{mediaId}": { "schema": { "$ref": "#/entities/Media" }, "description": "Base64 media assets" }
+  }
+}
